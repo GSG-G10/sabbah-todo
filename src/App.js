@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="App">
       <h1>To Do List</h1>
-      <AddForm tasks={tasks} setTasks={setTasks} />
+      <AddForm tasks={tasks} setTasks={setTasks} className='form' />
       <Card tasks={tasks} setTasks={setTasks} />
       <br />
       <Button type="primary" danger onClick={() => setTasks([])}>
