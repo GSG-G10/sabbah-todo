@@ -1,30 +1,58 @@
-import { Collapse, Button } from 'antd';
+import { Collapse, Button, Modal } from "antd";
+import { useState } from "react";
 
 const { Panel } = Collapse;
 
-const Card = () => {
-    
-    const text = `
-      A dog is a type of domesticated animal.
-      Known for its loyalty and faithfulness,
-      it can be found as a welcome guest in many households across the world.
-    `;
-    
+const Card = (props) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { tasks, setTasks } = props;
+  const [eleToRemove, setEleToRemove] = useState(null);
+  const handleDelete = (e) => {
+    const box =
+      e.target.parentElement.parentElement.parentElement.parentElement;
+    setEleToRemove(box);
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    if (tasks) {
+      const filtered = tasks.filter((ele) => ele.id !== eleToRemove.id);
+      setTasks(filtered);
+    }
+    eleToRemove.parentElement.removeChild(eleToRemove);
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+  if (tasks.length) {
     return (
-      <Collapse >
-        <Panel header="This is panel header 1" key="1">
-          <p>{text}</p>
-          <Button type="primary" danger> Delete </Button>
-        </Panel>
-        <Panel header="This is panel header 2" key="2">
-          <p>{text}</p>
-          <Button type="primary" danger> Delete </Button>
-        </Panel>
-        <Panel header="This is panel header 3" key="3">
-          <p>{text}</p>
-          <Button type="primary" danger> Delete </Button>
-        </Panel>
+      <Collapse>
+        {tasks.map((ele, i) => {
+          return (
+            <Panel header={ele.title} key={i} id={ele.id}>
+              <p>{ele.description}</p>
+              <p> Ends at: {ele.date} </p>
+              <Button onClick={handleDelete} danger>
+                {" "}
+                Delete{" "}
+              </Button>
+              <Modal
+                title="Warning !"
+                visible={isModalVisible}
+                onOk={handleOk}
+                onCancel={handleCancel}
+              >
+                <p>Are you sure you want to delete this task ?</p>
+              </Modal>
+            </Panel>
+          );
+        })}
       </Collapse>
     );
-}
+  } else {
+    return <Panel header="Add new task to show it here" />;
+  }
+};
 export default Card;
